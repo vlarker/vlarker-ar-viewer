@@ -1,4 +1,4 @@
-export const VlownAddress = "0x9583B7dcFEdB57716A66d61C6aF52cD0e85C174d";
+export const VlownAddress = "0x49fD01FaA12c5Aa2be9B6494E1AE0c87b29c53ED";
 
 export const VlownABI = [
     // Read operations
