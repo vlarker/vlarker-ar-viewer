@@ -228,5 +228,5 @@ a:hover {
 
 .a-dialog-container {
   z-index: 9999 !important;
-  /* Ensure it floats above React HUD */
+  pointer-events: auto !important;
 }
