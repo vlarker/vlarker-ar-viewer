@@ -35,8 +35,8 @@ function App() {
   }, [view]);
 
   return (
-    <div className="app-container">
-      <nav className="navbar" style={{ position: 'relative', zIndex: 100 }}>
+    <div className="app-container" style={{ pointerEvents: view === 'ar' ? 'none' : 'auto' }}>
+      <nav className="navbar" style={{ position: 'relative', zIndex: 100, pointerEvents: 'auto' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <h1 style={{ background: 'linear-gradient(90deg, #38bdf8, #818cf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0, fontSize: '1.25rem' }}>Vlarker</h1>
@@ -73,7 +73,7 @@ function App() {
         </div>
       </nav>
 
-      <main style={{ minHeight: 'calc(100vh - 80px)' }}>
+      <main style={{ minHeight: 'calc(100vh - 80px)', pointerEvents: view === 'ar' ? 'none' : 'auto' }}>
         {view === 'ar' ? <VlarkerView /> : <VlarkerDashboard />}
       </main>
 
