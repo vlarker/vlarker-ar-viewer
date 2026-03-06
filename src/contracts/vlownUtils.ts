@@ -1,6 +1,7 @@
 export function getPlotBounds(lat: number, lng: number) {
-    const cLat = Math.floor(lat * 1000) / 1000 + 0.0005;
-    const cLng = Math.floor(lng * 1000) / 1000 + 0.0005;
+    // Robust integer rounding to precisely align with the .0005 grid center.
+    const cLat = (Math.floor(Math.round(lat * 10000) / 10) * 10 + 5) / 10000;
+    const cLng = (Math.floor(Math.round(lng * 10000) / 10) * 10 + 5) / 10000;
     return { cLat, cLng };
 }
 

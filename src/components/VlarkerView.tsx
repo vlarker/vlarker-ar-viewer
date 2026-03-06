@@ -25,6 +25,10 @@ const VlarkerView = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
+    // Testing State
+    const [testBlurb, setTestBlurb] = useState<string>("");
+    const [activeTestBlurb, setActiveTestBlurb] = useState<string>("");
+
     // Compute plot and fetch Web3 whenever GPS changes
     useEffect(() => {
         if (!geo.lat || !geo.lng || !provider) return;
@@ -192,6 +196,31 @@ const VlarkerView = () => {
                         )}
                     </div>
                 )}
+
+                {/* Local AR Engine Test Mechanism */}
+                <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(234, 179, 8, 0.05)', borderRadius: '8px', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+                    <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#eab308' }}>AR Engine Testing</h3>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', marginBottom: '1rem' }}>Force a local AR tower projection at your current coordinate center for testing.</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <input
+                            type="text"
+                            className="glass-input"
+                            value={testBlurb}
+                            onChange={(e) => setTestBlurb(e.target.value)}
+                            placeholder="Enter a test message..."
+                        />
+                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                            <button className="btn-primary" style={{ background: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)', boxShadow: '0 4px 14px 0 rgba(234, 179, 8, 0.4)' }} onClick={() => setActiveTestBlurb(testBlurb)}>
+                                Project Tower
+                            </button>
+                            {activeTestBlurb && (
+                                <button className="btn-secondary" onClick={() => { setTestBlurb(""); setActiveTestBlurb(""); }}>
+                                    Clear
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Radar Background Animation */}
@@ -207,6 +236,34 @@ const VlarkerView = () => {
                     to { transform: rotate(360deg); }
                 }
             `}</style>
+
+            {/* AR Scene Background */}
+            <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -10, pointerEvents: 'none' }}>
+                <a-scene
+                    vr-mode-ui="enabled: false"
+                    arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+                    renderer="antialias: true; alpha: true"
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                >
+                    <a-camera gps-camera rotation-reader></a-camera>
+                    {(activeTestBlurb || blurb) && cLatLng ? (
+                        <a-entity gps-entity-place={`latitude: ${cLatLng.cLat}; longitude: ${cLatLng.cLng};`}>
+                            {/* 200 foot tower ≈ 60 meters */}
+                            <a-cylinder color={activeTestBlurb ? "#eab308" : "#c084fc"} height="60" radius="1.5" position="0 30 0" opacity="0.4" transparent="true"></a-cylinder>
+
+                            {/* Billboard Text facing user camera */}
+                            <a-text
+                                value={activeTestBlurb || blurb}
+                                color="#ffffff"
+                                align="center"
+                                scale="15 15 15"
+                                position="0 65 0"
+                                look-at="[gps-camera]"
+                            ></a-text>
+                        </a-entity>
+                    ) : null}
+                </a-scene>
+            </div>
         </div>
     );
 };
