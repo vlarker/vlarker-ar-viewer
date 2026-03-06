@@ -9,18 +9,6 @@ import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 import React from 'react';
 
-declare module 'react' {
-    namespace JSX {
-        interface IntrinsicElements {
-            'a-scene': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { [key: string]: any }, HTMLElement>;
-            'a-camera': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { [key: string]: any }, HTMLElement>;
-            'a-entity': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { [key: string]: any }, HTMLElement>;
-            'a-cylinder': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { [key: string]: any }, HTMLElement>;
-            'a-text': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { [key: string]: any }, HTMLElement>;
-        }
-    }
-}
-
 const VlarkerView = () => {
     const geo = useGeolocation();
     const { provider, account } = useWeb3();
@@ -44,12 +32,14 @@ const VlarkerView = () => {
 
     // Compute plot and fetch Web3 whenever GPS changes
     useEffect(() => {
-        if (!geo.lat || !geo.lng || !provider) return;
+        if (!geo.lat || !geo.lng) return;
 
         const checkLocation = async () => {
             try {
                 const { cLat, cLng } = getPlotBounds(geo.lat, geo.lng);
                 setCLatLng({ cLat, cLng });
+
+                if (!provider) return;
 
                 const { scaledLat, scaledLng } = getScaledCoords(cLat, cLng);
                 const contract = new ethers.Contract(VlownAddress, VlownABI, provider);
@@ -147,36 +137,36 @@ const VlarkerView = () => {
     }
 
     return (
-        <div style={{ height: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', position: 'relative' }}>
+        <div style={{ height: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '1rem', position: 'relative', overflow: 'hidden' }}>
 
-            <div className="glass-panel" style={{ width: '100%', maxWidth: '600px', padding: '2rem', textAlign: 'center', zIndex: 10 }}>
-                <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>You are standing in</h2>
-                <div style={{ fontSize: '1.25rem', fontFamily: 'monospace', color: 'var(--color-primary)', background: 'rgba(56, 189, 248, 0.1)', padding: '0.75rem', borderRadius: '8px', display: 'inline-block', marginBottom: '2rem' }}>
+            <div className="glass-panel" style={{ width: '100%', maxWidth: '600px', padding: '1.5rem', textAlign: 'center', zIndex: 10, maxHeight: '50vh', overflowY: 'auto', marginBottom: '1rem' }}>
+                <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>You are standing in</h2>
+                <div style={{ fontSize: '1rem', fontFamily: 'monospace', color: 'var(--color-primary)', background: 'rgba(56, 189, 248, 0.1)', padding: '0.5rem', borderRadius: '8px', display: 'inline-block', marginBottom: '1rem' }}>
                     Lat: {cLatLng?.cLat.toFixed(4)} | Lng: {cLatLng?.cLng.toFixed(4)}
                 </div>
 
                 {!plotOwner ? (
-                    <div style={{ padding: '2rem', border: '1px dashed var(--color-glass-border)', borderRadius: '8px' }}>
-                        <p style={{ color: 'var(--color-text-muted)' }}>This plot of land is untamed wilderness.</p>
+                    <div style={{ padding: '1.5rem', border: '1px dashed var(--color-glass-border)', borderRadius: '8px' }}>
+                        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>This plot of land is untamed wilderness.</p>
                         <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>Visit the main VLOwn web app to claim it.</p>
                     </div>
                 ) : (
                     <div>
-                        <div style={{ marginBottom: '2rem' }}>
-                            <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', marginBottom: '0.25rem' }}>Property of</p>
-                            <p style={{ fontSize: '1rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '8px', display: 'inline-block', fontFamily: 'monospace' }}>
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '0.25rem' }}>Property of</p>
+                            <p style={{ fontSize: '0.875rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '8px', display: 'inline-block', fontFamily: 'monospace' }}>
                                 {plotOwner}
                             </p>
                         </div>
 
                         {blurb ? (
                             <div style={{ position: 'relative' }}>
-                                <div style={{ fontSize: '1.5rem', fontStyle: 'italic', padding: '1.5rem', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                <div style={{ fontSize: '1.125rem', fontStyle: 'italic', padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
                                     "{blurb}"
                                 </div>
                             </div>
                         ) : (
-                            <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>The owner has not left a message here.</p>
+                            <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }}>The owner has not left a message here.</p>
                         )}
 
                         {isOwnedByMe && (

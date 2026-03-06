@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 import { useWeb3 } from './contexts/Web3Context';
 import VlarkerView from './components/VlarkerView';
 import VlarkerDashboard from './components/VlarkerDashboard';
 
 function App() {
-  const { account, connect, isConnecting } = useWeb3();
+  const { account, connect, isConnecting, error } = useWeb3();
   const [view, setView] = useState<'ar' | 'dashboard'>('ar');
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error, { duration: 5000 });
+    }
+  }, [error]);
 
   useEffect(() => {
     if (account) {
