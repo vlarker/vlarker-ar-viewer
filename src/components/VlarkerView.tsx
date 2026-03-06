@@ -190,12 +190,22 @@ const VlarkerView = () => {
                         )}
                     </div>
 
-                    <button
-                        onClick={() => setIsHudExpanded(!isHudExpanded)}
-                        style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
-                    >
-                        {isHudExpanded ? 'Collapse HUD' : 'Expand HUD'}
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        {activeTestBlurb && (
+                            <button
+                                onClick={() => { setActiveTestBlurb(""); setTestBlurb(""); setIsHudExpanded(true); }}
+                                style={{ background: 'rgba(234, 179, 8, 0.2)', border: '1px solid rgba(234, 179, 8, 0.5)', color: '#eab308', padding: '0.25rem 0.75rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                            >
+                                Stop Test
+                            </button>
+                        )}
+                        <button
+                            onClick={() => setIsHudExpanded(!isHudExpanded)}
+                            style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                        >
+                            {isHudExpanded ? 'Collapse HUD' : 'Expand HUD'}
+                        </button>
+                    </div>
                 </div>
 
                 {isHudExpanded && (
@@ -272,7 +282,7 @@ const VlarkerView = () => {
                                     placeholder="Enter a test message..."
                                 />
                                 <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                                    <button className="btn-primary" style={{ background: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)', boxShadow: '0 4px 14px 0 rgba(234, 179, 8, 0.4)' }} onClick={() => setActiveTestBlurb(testBlurb)}>
+                                    <button className="btn-primary" style={{ background: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)', boxShadow: '0 4px 14px 0 rgba(234, 179, 8, 0.4)' }} onClick={() => { setActiveTestBlurb(testBlurb); setIsHudExpanded(false); }}>
                                         Project Tower
                                     </button>
                                     {activeTestBlurb && (
