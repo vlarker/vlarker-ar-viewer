@@ -16,6 +16,18 @@ function App() {
     }
   }, [account]);
 
+  useEffect(() => {
+    if (view === 'ar') {
+      document.body.classList.add('ar-mode');
+    } else {
+      document.body.classList.remove('ar-mode');
+    }
+
+    return () => {
+      document.body.classList.remove('ar-mode');
+    };
+  }, [view]);
+
   return (
     <div className="app-container">
       <nav className="navbar" style={{ position: 'relative', zIndex: 100 }}>

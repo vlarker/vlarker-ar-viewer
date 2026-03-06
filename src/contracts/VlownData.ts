@@ -10,6 +10,8 @@ export const VlownABI = [
     "function tokenURI(uint256 tokenId) view returns (string)",
     "function stakePrice() view returns (uint256)",
     "function transferFee() view returns (uint256)",
+    "function totalSupply() view returns (uint256)",
+    "function tokenByIndex(uint256 index) view returns (uint256)",
 
     // Write operations
     "function stakeClaim(int32 lat, int32 lng, uint256 listingPrice) payable",
