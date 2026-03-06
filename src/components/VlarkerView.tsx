@@ -32,6 +32,28 @@ const VlarkerView = () => {
 
     // UI Layout State
     const [isHudExpanded, setIsHudExpanded] = useState<boolean>(true);
+    const [needsMotionPermission, setNeedsMotionPermission] = useState<boolean>(false);
+
+    // Initial check for iOS 13+ Safari motion sensor requirements
+    useEffect(() => {
+        if (typeof (window as any).DeviceOrientationEvent !== 'undefined' && typeof (window as any).DeviceOrientationEvent.requestPermission === 'function') {
+            setNeedsMotionPermission(true);
+        }
+    }, []);
+
+    const handleARPermission = async () => {
+        try {
+            const result = await (window as any).DeviceOrientationEvent.requestPermission();
+            if (result === 'granted') {
+                setNeedsMotionPermission(false);
+            } else {
+                toast.error("Motion permissions denied. AR tracking will fail.");
+            }
+        } catch (err) {
+            console.error("Error requesting AR permissions", err);
+            setNeedsMotionPermission(false);
+        }
+    };
 
     // Compute plot and fetch Web3 whenever GPS changes
     useEffect(() => {
@@ -141,6 +163,20 @@ const VlarkerView = () => {
 
     return (
         <div style={{ height: 'calc(100vh - 80px)', pointerEvents: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '1rem', position: 'relative', overflow: 'hidden' }}>
+
+            {needsMotionPermission && (
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999, background: 'rgba(15, 23, 42, 0.95)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem', pointerEvents: 'auto' }}>
+                    <div className="glass-panel" style={{ width: '100%', maxWidth: '400px', padding: '2rem', textAlign: 'center' }}>
+                        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Camera Tracking</h2>
+                        <p style={{ color: 'var(--color-text-muted)', marginBottom: '2rem', fontSize: '0.875rem' }}>
+                            Vlarker Augmented Reality needs access to your device's motion sensors to project the towers accurately around you.
+                        </p>
+                        <button className="btn-primary" style={{ width: '100%' }} onClick={handleARPermission}>
+                            Enable Motion Sensors
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <div className="glass-panel" style={{ width: '100%', pointerEvents: 'auto', maxWidth: '600px', padding: '1.5rem', textAlign: 'center', zIndex: 10, maxHeight: isHudExpanded ? '50vh' : 'auto', overflowY: isHudExpanded ? 'auto' : 'visible', marginBottom: '1rem', transition: 'max-height 0.3s ease-out' }}>
 
@@ -252,8 +288,9 @@ const VlarkerView = () => {
             </div>
 
             {/* AR Scene Background */}
-            <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -10, pointerEvents: 'auto' }}>
+            <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -10, pointerEvents: 'none' }}>
                 <a-scene
+                    device-orientation-permission-ui="enabled: false"
                     vr-mode-ui="enabled: false"
                     arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
                     renderer="antialias: true; alpha: true"
