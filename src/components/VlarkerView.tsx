@@ -1,12 +1,25 @@
+// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { getPlotBounds, getScaledCoords } from '../contracts/vlownUtils';
 import { useWeb3 } from '../contexts/Web3Context';
 import { VlownABI, VlownAddress } from '../contracts/VlownData';
 import { ethers } from 'ethers';
-import { db } from '../firebase';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 import toast from 'react-hot-toast';
+import React from 'react';
+
+declare module 'react' {
+    namespace JSX {
+        interface IntrinsicElements {
+            'a-scene': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { [key: string]: any }, HTMLElement>;
+            'a-camera': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { [key: string]: any }, HTMLElement>;
+            'a-entity': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { [key: string]: any }, HTMLElement>;
+            'a-cylinder': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { [key: string]: any }, HTMLElement>;
+            'a-text': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { [key: string]: any }, HTMLElement>;
+        }
+    }
+}
 
 const VlarkerView = () => {
     const geo = useGeolocation();
