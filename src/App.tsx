@@ -38,22 +38,21 @@ function App() {
     <div className="app-container">
       <nav className="navbar" style={{ position: 'relative', zIndex: 100 }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <h1 style={{ background: 'linear-gradient(90deg, #38bdf8, #818cf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>Vlarker</h1>
-            <span style={{ color: 'var(--color-primary)', border: '1px solid var(--color-primary)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>Location AR</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h1 style={{ background: 'linear-gradient(90deg, #38bdf8, #818cf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0, fontSize: '1.25rem' }}>Vlarker</h1>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {account && (
               <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '0.25rem', gap: '0.25rem' }}>
                 <button
-                  style={{ background: view === 'ar' ? 'var(--color-primary)' : 'transparent', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.875rem', cursor: 'pointer', transition: 'all 0.2s' }}
+                  style={{ background: view === 'ar' ? 'var(--color-primary)' : 'transparent', color: '#fff', border: 'none', padding: '0.4rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
                   onClick={() => setView('ar')}
                 >
-                  AR Viewer
+                  AR Camera
                 </button>
                 <button
-                  style={{ background: view === 'dashboard' ? 'var(--color-primary)' : 'transparent', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.875rem', cursor: 'pointer', transition: 'all 0.2s' }}
+                  style={{ background: view === 'dashboard' ? 'var(--color-primary)' : 'transparent', color: '#fff', border: 'none', padding: '0.4rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
                   onClick={() => setView('dashboard')}
                 >
                   My Plots
@@ -62,12 +61,12 @@ function App() {
             )}
 
             {!account ? (
-              <button className="btn-primary" onClick={connect} disabled={isConnecting}>
-                {isConnecting ? "Connecting..." : "Connect Wallet"}
+              <button className="btn-primary" onClick={connect} disabled={isConnecting} style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
+                {isConnecting ? "..." : "Connect"}
               </button>
             ) : (
-              <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.875rem' }}>
-                {account.substring(0, 6)}...{account.substring(account.length - 4)}
+              <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.4rem 0.5rem', borderRadius: '8px', fontSize: '0.7rem', whiteSpace: 'nowrap' }}>
+                {account.substring(0, 4)}...{account.substring(account.length - 4)}
               </div>
             )}
           </div>

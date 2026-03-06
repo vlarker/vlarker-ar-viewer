@@ -30,6 +30,9 @@ const VlarkerView = () => {
     const [testBlurb, setTestBlurb] = useState<string>("");
     const [activeTestBlurb, setActiveTestBlurb] = useState<string>("");
 
+    // UI Layout State
+    const [isHudExpanded, setIsHudExpanded] = useState<boolean>(true);
+
     // Compute plot and fetch Web3 whenever GPS changes
     useEffect(() => {
         if (!geo.lat || !geo.lng) return;
@@ -137,108 +140,116 @@ const VlarkerView = () => {
     }
 
     return (
-        <div style={{ height: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '1rem', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ height: 'calc(100vh - 80px)', pointerEvents: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '1rem', position: 'relative', overflow: 'hidden' }}>
 
-            <div className="glass-panel" style={{ width: '100%', maxWidth: '600px', padding: '1.5rem', textAlign: 'center', zIndex: 10, maxHeight: '50vh', overflowY: 'auto', marginBottom: '1rem' }}>
-                <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>You are standing in</h2>
-                <div style={{ fontSize: '1rem', fontFamily: 'monospace', color: 'var(--color-primary)', background: 'rgba(56, 189, 248, 0.1)', padding: '0.5rem', borderRadius: '8px', display: 'inline-block', marginBottom: '1rem' }}>
-                    Lat: {cLatLng?.cLat.toFixed(4)} | Lng: {cLatLng?.cLng.toFixed(4)}
+            <div className="glass-panel" style={{ width: '100%', pointerEvents: 'auto', maxWidth: '600px', padding: '1.5rem', textAlign: 'center', zIndex: 10, maxHeight: isHudExpanded ? '50vh' : 'auto', overflowY: isHudExpanded ? 'auto' : 'visible', marginBottom: '1rem', transition: 'max-height 0.3s ease-out' }}>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isHudExpanded ? '0.5rem' : '0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <h2 style={{ fontSize: isHudExpanded ? '1.5rem' : '1.125rem', margin: 0, transition: 'all 0.3s ease' }}>Plot Data</h2>
+                        {!isHudExpanded && (
+                            <div style={{ fontSize: '0.875rem', fontFamily: 'monospace', color: 'var(--color-primary)', background: 'rgba(56, 189, 248, 0.1)', padding: '0.25rem 0.5rem', borderRadius: '4px' }}>
+                                Lng: {cLatLng?.cLng.toFixed(4)}
+                            </div>
+                        )}
+                    </div>
+
+                    <button
+                        onClick={() => setIsHudExpanded(!isHudExpanded)}
+                        style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}
+                    >
+                        {isHudExpanded ? 'Collapse HUD' : 'Expand HUD'}
+                    </button>
                 </div>
 
-                {!plotOwner ? (
-                    <div style={{ padding: '1.5rem', border: '1px dashed var(--color-glass-border)', borderRadius: '8px' }}>
-                        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>This plot of land is untamed wilderness.</p>
-                        <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>Visit the main VLOwn web app to claim it.</p>
-                    </div>
-                ) : (
-                    <div>
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '0.25rem' }}>Property of</p>
-                            <p style={{ fontSize: '0.875rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '8px', display: 'inline-block', fontFamily: 'monospace' }}>
-                                {plotOwner}
-                            </p>
+                {isHudExpanded && (
+                    <>
+                        <div style={{ fontSize: '1rem', fontFamily: 'monospace', color: 'var(--color-primary)', background: 'rgba(56, 189, 248, 0.1)', padding: '0.5rem', borderRadius: '8px', display: 'inline-block', marginBottom: '1rem' }}>
+                            Lat: {cLatLng?.cLat.toFixed(4)} | Lng: {cLatLng?.cLng.toFixed(4)}
                         </div>
 
-                        {blurb ? (
-                            <div style={{ position: 'relative' }}>
-                                <div style={{ fontSize: '1.125rem', fontStyle: 'italic', padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                                    "{blurb}"
-                                </div>
+                        {!plotOwner ? (
+                            <div style={{ padding: '1.5rem', border: '1px dashed var(--color-glass-border)', borderRadius: '8px' }}>
+                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>This plot of land is untamed wilderness.</p>
+                                <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>Visit the main VLOwn web app to claim it.</p>
                             </div>
                         ) : (
-                            <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }}>The owner has not left a message here.</p>
-                        )}
+                            <div>
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '0.25rem' }}>Property of</p>
+                                    <p style={{ fontSize: '0.875rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '8px', display: 'inline-block', fontFamily: 'monospace' }}>
+                                        {plotOwner}
+                                    </p>
+                                </div>
 
-                        {isOwnedByMe && (
-                            <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(56, 189, 248, 0.05)', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
-                                <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>Owner Controls</h3>
-                                {isEditing ? (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                        <textarea
-                                            className="glass-input"
-                                            style={{ width: '100%', minHeight: '100px', resize: 'vertical' }}
-                                            value={editingBlurb}
-                                            onChange={(e) => setEditingBlurb(e.target.value)}
-                                            placeholder="Leave a message for travelers..."
-                                        />
-                                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                                            <button className="btn-primary" onClick={handleSave} disabled={isSaving}>
-                                                {isSaving ? "Signing..." : "Save to Firebase"}
-                                            </button>
-                                            <button className="btn-secondary" onClick={() => setIsEditing(false)} disabled={isSaving}>
-                                                Cancel
-                                            </button>
+                                {blurb ? (
+                                    <div style={{ position: 'relative' }}>
+                                        <div style={{ fontSize: '1.125rem', fontStyle: 'italic', padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                            "{blurb}"
                                         </div>
                                     </div>
                                 ) : (
-                                    <button className="btn-primary" onClick={() => setIsEditing(true)}>
-                                        Update Blurb
-                                    </button>
+                                    <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }}>The owner has not left a message here.</p>
+                                )}
+
+                                {isOwnedByMe && (
+                                    <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(56, 189, 248, 0.05)', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
+                                        <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>Owner Controls</h3>
+                                        {isEditing ? (
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                                <textarea
+                                                    className="glass-input"
+                                                    style={{ width: '100%', minHeight: '100px', resize: 'vertical' }}
+                                                    value={editingBlurb}
+                                                    onChange={(e) => setEditingBlurb(e.target.value)}
+                                                    placeholder="Leave a message for travelers..."
+                                                />
+                                                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                                                    <button className="btn-primary" onClick={handleSave} disabled={isSaving}>
+                                                        {isSaving ? "Signing..." : "Save to Firebase"}
+                                                    </button>
+                                                    <button className="btn-secondary" onClick={() => setIsEditing(false)} disabled={isSaving}>
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <button className="btn-primary" onClick={() => setIsEditing(true)}>
+                                                Update Blurb
+                                            </button>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         )}
-                    </div>
-                )}
 
-                {/* Local AR Engine Test Mechanism */}
-                <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(234, 179, 8, 0.05)', borderRadius: '8px', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
-                    <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#eab308' }}>AR Engine Testing</h3>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', marginBottom: '1rem' }}>Force a local AR tower projection at your current coordinate center for testing.</p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <input
-                            type="text"
-                            className="glass-input"
-                            value={testBlurb}
-                            onChange={(e) => setTestBlurb(e.target.value)}
-                            placeholder="Enter a test message..."
-                        />
-                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                            <button className="btn-primary" style={{ background: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)', boxShadow: '0 4px 14px 0 rgba(234, 179, 8, 0.4)' }} onClick={() => setActiveTestBlurb(testBlurb)}>
-                                Project Tower
-                            </button>
-                            {activeTestBlurb && (
-                                <button className="btn-secondary" onClick={() => { setTestBlurb(""); setActiveTestBlurb(""); }}>
-                                    Clear
-                                </button>
-                            )}
+                        {/* Local AR Engine Test Mechanism */}
+                        <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(234, 179, 8, 0.05)', borderRadius: '8px', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+                            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#eab308' }}>AR Engine Testing</h3>
+                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', marginBottom: '1rem' }}>Force a local AR tower projection at your current coordinate center for testing.</p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <input
+                                    type="text"
+                                    className="glass-input"
+                                    value={testBlurb}
+                                    onChange={(e) => setTestBlurb(e.target.value)}
+                                    placeholder="Enter a test message..."
+                                />
+                                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                                    <button className="btn-primary" style={{ background: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)', boxShadow: '0 4px 14px 0 rgba(234, 179, 8, 0.4)' }} onClick={() => setActiveTestBlurb(testBlurb)}>
+                                        Project Tower
+                                    </button>
+                                    {activeTestBlurb && (
+                                        <button className="btn-secondary" onClick={() => { setTestBlurb(""); setActiveTestBlurb(""); }}>
+                                            Clear
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </>
+                )}
             </div>
-
-            {/* Radar Background Animation */}
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100vw', height: '100vw', maxWidth: '800px', maxHeight: '800px', borderRadius: '50%', border: '1px solid rgba(56, 189, 248, 0.1)', zIndex: 0, pointerEvents: 'none' }}>
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '60%', height: '60%', borderRadius: '50%', border: '1px solid rgba(56, 189, 248, 0.2)' }}></div>
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '20%', height: '20%', borderRadius: '50%', border: '1px solid rgba(56, 189, 248, 0.3)' }}></div>
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, 0)', width: '50%', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.5))', animation: 'radar 4s linear infinite', transformOrigin: '0% 0%' }}></div>
-            </div>
-
-            <style>{`
-                @keyframes radar {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-            `}</style>
 
             {/* AR Scene Background */}
             <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -10, pointerEvents: 'none' }}>
